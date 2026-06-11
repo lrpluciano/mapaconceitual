@@ -1,0 +1,1789 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa Conceitual - Bullying | Pedagogia IFSULDEMINAS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #5B54E0;
+            --secondary: #E8456B;
+            --accent: #2DB5AB;
+            --dark: #2D3561;
+            --light: #F7F9FB;
+            --text: #333;
+            --card-bg: rgba(255, 255, 255, 0.97);
+            
+            --color-root: #5B54E0;
+            --color-redes: #E8456B;
+            --color-marcadores: #2DB5AB;
+            --color-perfis: #E89B20;
+            --color-teoria: #8E24AA;
+            --color-metodo: #546E7A;
+            
+            --line-default: #CBD5E1;
+            --sidebar-w: 340px;
+
+            --zoom: 1;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            background: var(--card-bg);
+            border-bottom: 3px solid var(--primary);
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+            backdrop-filter: blur(10px);
+            z-index: 10;
+            flex-wrap: wrap;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        header .title-block { max-width: 70%; }
+
+        header .subtitle-tag {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--primary);
+            margin-bottom: 2px;
+            font-weight: 700;
+        }
+
+        header h1 {
+            font-size: 1.15em;
+            font-weight: 700;
+            line-height: 1.3;
+            color: var(--dark);
+        }
+
+        header .authors {
+            font-size: 11px;
+            color: #777;
+            margin-top: 3px;
+            font-style: italic;
+        }
+
+        header .institution-block {
+            text-align: right;
+            font-size: 11px;
+            color: var(--dark);
+            line-height: 1.4;
+            font-weight: 500;
+        }
+
+        /* ===== MAIN LAYOUT ===== */
+        .main-container {
+            display: flex;
+            flex: 1;
+            min-height: 0; /* permite que o flex encolha */
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: var(--sidebar-w);
+            background: var(--card-bg);
+            border-right: 1px solid rgba(91, 84, 224, 0.1);
+            padding: 20px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            overflow-y: auto;
+            backdrop-filter: blur(10px);
+            flex-shrink: 0;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(91,84,224,0.2) transparent;
+        }
+
+        .sidebar::-webkit-scrollbar { width: 5px; }
+        .sidebar::-webkit-scrollbar-thumb { background: rgba(91,84,224,0.2); border-radius: 10px; }
+
+        .sidebar h2 {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--dark);
+            margin-bottom: 2px;
+            font-weight: 600;
+        }
+
+        /* --- Search --- */
+        .search-box {
+            position: relative;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 10px 14px 10px 36px;
+            border: 1px solid rgba(91,84,224,0.2);
+            border-radius: 10px;
+            font-size: 13px;
+            font-family: inherit;
+            background: #fff;
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .search-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(91,84,224,0.12);
+        }
+        .search-box input::placeholder { color: #aaa; }
+        .search-box .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+            font-size: 14px;
+            pointer-events: none;
+        }
+        .search-box .search-clear {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 16px;
+            color: #999;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 50%;
+            display: none;
+        }
+        .search-box .search-clear.visible { display: block; }
+        .search-box .search-clear:hover { background: #f0f0f0; color: #666; }
+
+        /* --- Filter Buttons --- */
+        .filter-btn {
+            background: #ffffff;
+            border: 1px solid rgba(91, 84, 224, 0.15);
+            color: var(--text);
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 12.5px;
+            font-weight: 500;
+            font-family: inherit;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-btn::before {
+            content: '';
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .filter-btn:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        .btn-root::before { background-color: var(--color-root); }
+        .btn-redes::before { background-color: var(--color-redes); }
+        .btn-marcadores::before { background-color: var(--color-marcadores); }
+        .btn-perfis::before { background-color: var(--color-perfis); }
+        .btn-teoria::before { background-color: var(--color-teoria); }
+        .btn-metodo::before { background-color: var(--color-metodo); }
+
+        .filter-btn:hover {
+            border-color: var(--primary);
+            background-color: #f8f9ff;
+        }
+
+        .filter-btn.active {
+            border-color: var(--primary);
+            background-color: #f0efff;
+            font-weight: 600;
+        }
+
+        /* Filter button expand arrow */
+        .filter-btn .expand-arrow {
+            margin-left: auto;
+            font-size: 10px;
+            color: #aaa;
+            transition: transform 0.25s ease;
+            flex-shrink: 0;
+        }
+        .filter-btn.active .expand-arrow {
+            transform: rotate(90deg);
+            color: var(--primary);
+        }
+
+        /* Sub-items container */
+        .filter-subitems {
+            display: none;
+            flex-direction: column;
+            gap: 3px;
+            padding-left: 20px;
+        }
+        .filter-subitems.open {
+            display: flex;
+            animation: fadeInSubitems 0.3s ease;
+        }
+        @keyframes fadeInSubitems {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .subitem-btn {
+            background: #fafbff;
+            border: 1px solid rgba(91,84,224,0.08);
+            color: var(--text);
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 11.5px;
+            font-weight: 500;
+            font-family: inherit;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            line-height: 1.35;
+        }
+        .subitem-btn::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 5px;
+        }
+        .subitem-btn[data-cat="root"]::before { background-color: var(--color-root); }
+        .subitem-btn[data-cat="redes"]::before { background-color: var(--color-redes); }
+        .subitem-btn[data-cat="marcadores"]::before { background-color: var(--color-marcadores); }
+        .subitem-btn[data-cat="perfis"]::before { background-color: var(--color-perfis); }
+        .subitem-btn[data-cat="teoria"]::before { background-color: var(--color-teoria); }
+        .subitem-btn[data-cat="metodo"]::before { background-color: var(--color-metodo); }
+
+        .subitem-btn:hover {
+            background: #f0efff;
+            border-color: rgba(91,84,224,0.2);
+            transform: translateX(3px);
+        }
+        .subitem-btn:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+        .subitem-btn.active-sub {
+            background: #eef0ff;
+            border-color: var(--primary);
+            font-weight: 600;
+        }
+        .subitem-btn .sub-label {
+            font-size: 9.5px;
+            font-style: italic;
+            color: #999;
+            display: block;
+            margin-bottom: 1px;
+        }
+
+        .clear-btn {
+            border-style: dashed !important;
+            justify-content: center;
+            color: #888;
+            font-size: 12px;
+        }
+        .clear-btn::before { display: none !important; }
+        .clear-btn:hover { color: var(--primary); }
+
+        .sidebar-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(91,84,224,0.2), transparent);
+            margin: 4px 0;
+            flex-shrink: 0;
+        }
+
+        /* --- Details Box --- */
+        .details-box {
+            background: #ffffff;
+            border: 1px solid rgba(91, 84, 224, 0.15);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .details-box h3 {
+            font-size: 11px;
+            color: var(--dark);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #f0f2f7;
+            padding-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .details-box .concept-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--dark);
+            line-height: 1.4;
+        }
+
+        .details-box blockquote {
+            font-size: 12px;
+            color: #555;
+            line-height: 1.65;
+            border-left: 3px solid var(--primary);
+            padding-left: 12px;
+            font-style: italic;
+            max-height: 180px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(91,84,224,0.15) transparent;
+        }
+
+        .details-box .citation-source {
+            font-size: 10.5px;
+            color: var(--primary);
+            font-weight: 600;
+            align-self: flex-end;
+        }
+
+        .details-box .breadcrumb {
+            font-size: 10.5px;
+            color: #999;
+            line-height: 1.4;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2px;
+            align-items: center;
+        }
+        .details-box .breadcrumb span { color: var(--primary); font-weight: 500; }
+        .details-box .breadcrumb .sep { color: #ccc; margin: 0 2px; }
+
+        /* --- Children Navigation --- */
+        .children-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .children-nav-title {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #999;
+            font-weight: 600;
+            padding-bottom: 4px;
+            border-bottom: 1px dashed #e8e8e8;
+        }
+        .child-link {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 8px 10px;
+            background: #fafbff;
+            border: 1px solid rgba(91,84,224,0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+            font-family: inherit;
+            width: 100%;
+        }
+        .child-link:hover {
+            background: #f0efff;
+            border-color: var(--primary);
+            transform: translateX(3px);
+        }
+        .child-link:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+        .child-link .child-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 4px;
+        }
+        .child-link .child-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .child-link .child-label {
+            font-size: 9.5px;
+            font-style: italic;
+            color: #999;
+            margin-bottom: 1px;
+        }
+        .child-link .child-name {
+            font-size: 11.5px;
+            font-weight: 600;
+            color: var(--dark);
+            line-height: 1.35;
+            word-break: break-word;
+        }
+        .parent-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            background: #f9fafb;
+            border: 1px solid rgba(0,0,0,0.06);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+            font-family: inherit;
+            width: 100%;
+            font-size: 11px;
+            color: #666;
+        }
+        .parent-link:hover {
+            background: #f0efff;
+            color: var(--primary);
+        }
+        .parent-link:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+        .parent-link .arrow-up {
+            font-size: 14px;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        /* ===== CANVAS / MAP AREA ===== */
+        .canvas-wrapper {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            min-width: 0;
+        }
+
+        /* Zoom controls */
+        .zoom-controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            z-index: 5;
+        }
+
+        .zoom-btn {
+            width: 38px;
+            height: 38px;
+            border: 1px solid rgba(91,84,224,0.2);
+            border-radius: 10px;
+            background: var(--card-bg);
+            color: var(--dark);
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            font-family: inherit;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .zoom-btn:hover { background: #f0efff; border-color: var(--primary); }
+        .zoom-btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+        .zoom-level {
+            text-align: center;
+            font-size: 10px;
+            color: #888;
+            padding: 2px 0;
+            font-weight: 600;
+        }
+
+        /* Scroll hint for mobile */
+        .scroll-hint {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(45,53,97,0.8);
+            color: #fff;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            z-index: 5;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        .scroll-hint.visible { opacity: 1; }
+
+        .canvas {
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            padding: 40px 30px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(91,84,224,0.2) transparent;
+        }
+        .canvas::-webkit-scrollbar { width: 6px; height: 6px; }
+        .canvas::-webkit-scrollbar-thumb { background: rgba(91,84,224,0.2); border-radius: 10px; }
+
+        /* ===== TREE STRUCTURE ===== */
+        .tree {
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: max-content;
+            transform-origin: top center;
+            transition: transform 0.3s ease;
+        }
+
+        /* Root connector line */
+        .root-connector {
+            width: 2px;
+            height: 40px;
+            background: var(--line-default);
+            margin: 0 auto;
+            flex-shrink: 0;
+            transition: background-color 0.4s ease;
+        }
+
+        .tree ul {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            position: relative;
+            padding-top: 50px;
+            width: max-content;
+        }
+
+        .tree li {
+            text-align: center;
+            list-style-type: none;
+            position: relative;
+            padding: 50px 14px 0 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .tree li::before, .tree li::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 50%;
+            border-top: 2px solid var(--line-default);
+            width: 50%;
+            height: 50px;
+            z-index: 1;
+            transition: border-color 0.4s ease;
+        }
+
+        .tree li::after {
+            right: auto;
+            left: 50%;
+            border-left: 2px solid var(--line-default);
+            transition: border-color 0.4s ease;
+        }
+
+        .tree li:only-child::after, .tree li:only-child::before { display: none; }
+        .tree li:only-child { padding-top: 0; }
+        .tree li:first-child::before, .tree li:last-child::after { border: 0 none; }
+        .tree li:last-child::before { border-right: 2px solid var(--line-default); border-radius: 0 10px 0 0; }
+        .tree li:first-child::after { border-radius: 10px 0 0 0; }
+
+        .tree ul::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            border-left: 2px solid var(--line-default);
+            width: 0;
+            height: 50px;
+            transition: border-color 0.4s ease;
+        }
+
+        /* Colored lines when category is active */
+        .tree.cat-root li[data-branch="root"]::before,
+        .tree.cat-root li[data-branch="root"]::after,
+        .tree.cat-root li[data-branch="root"] ul::before { border-color: var(--color-root); }
+        .tree.cat-root .root-connector { background-color: var(--color-root); }
+
+        .tree.cat-redes li[data-branch="redes"]::before,
+        .tree.cat-redes li[data-branch="redes"]::after,
+        .tree.cat-redes li[data-branch="redes"] ul::before { border-color: var(--color-redes); }
+        .tree.cat-redes .root-connector { background-color: var(--color-redes); }
+
+        .tree.cat-marcadores li[data-branch="marcadores"]::before,
+        .tree.cat-marcadores li[data-branch="marcadores"]::after,
+        .tree.cat-marcadores li[data-branch="marcadores"] ul::before { border-color: var(--color-marcadores); }
+        .tree.cat-marcadores .root-connector { background-color: var(--color-marcadores); }
+
+        .tree.cat-perfis li[data-branch="perfis"]::before,
+        .tree.cat-perfis li[data-branch="perfis"]::after,
+        .tree.cat-perfis li[data-branch="perfis"] ul::before { border-color: var(--color-perfis); }
+        .tree.cat-perfis .root-connector { background-color: var(--color-perfis); }
+
+        .tree.cat-teoria li[data-branch="teoria"]::before,
+        .tree.cat-teoria li[data-branch="teoria"]::after,
+        .tree.cat-teoria li[data-branch="teoria"] ul::before { border-color: var(--color-teoria); }
+        .tree.cat-teoria .root-connector { background-color: var(--color-teoria); }
+
+        .tree.cat-metodo li[data-branch="metodo"]::before,
+        .tree.cat-metodo li[data-branch="metodo"]::after,
+        .tree.cat-metodo li[data-branch="metodo"] ul::before { border-color: var(--color-metodo); }
+        .tree.cat-metodo .root-connector { background-color: var(--color-metodo); }
+
+        .link-label {
+            position: absolute;
+            top: 14px;
+            background: #ffffff;
+            padding: 4px 12px;
+            font-size: 11px;
+            font-style: italic;
+            color: #666;
+            border: 1px solid var(--line-default);
+            border-radius: 20px;
+            z-index: 2;
+            transform: translateX(-50%);
+            left: 50%;
+            white-space: nowrap;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+            transition: all 0.4s ease;
+        }
+
+        .concept-node {
+            background-color: #ffffff;
+            border: 2px solid var(--line-default);
+            color: var(--dark);
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            z-index: 3;
+            max-width: 210px;
+            line-height: 1.4;
+            box-shadow: 0 3px 10px rgba(45, 53, 97, 0.06);
+            transition: all 0.3s ease;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .concept-node:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 3px;
+        }
+
+        .concept-node[data-cat="root"] { border-color: var(--color-root); }
+        .concept-node[data-cat="redes"] { border-color: var(--color-redes); }
+        .concept-node[data-cat="marcadores"] { border-color: var(--color-marcadores); }
+        .concept-node[data-cat="perfis"] { border-color: var(--color-perfis); }
+        .concept-node[data-cat="teoria"] { border-color: var(--color-teoria); }
+        .concept-node[data-cat="metodo"] { border-color: var(--color-metodo); }
+
+        /* Hover */
+        .concept-node:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(45, 53, 97, 0.12);
+        }
+
+        /* Fade inactive */
+        .tree.fade-inactive .concept-node:not(.active),
+        .tree.fade-inactive .link-label:not(.active) {
+            opacity: 0.18;
+            transition: opacity 0.4s ease;
+        }
+
+        .tree.fade-inactive .concept-node.active,
+        .tree.fade-inactive .link-label.active {
+            opacity: 1;
+        }
+
+        .concept-node.active {
+            transform: scale(1.04);
+            box-shadow: 0 8px 22px rgba(45, 53, 97, 0.18);
+        }
+
+        .concept-node.active:active {
+            transform: scale(1.0);
+        }
+
+        .concept-node[data-cat="root"].active { background-color: #f3f2ff; border-color: var(--color-root); }
+        .concept-node[data-cat="redes"].active { background-color: #fff0f3; border-color: var(--color-redes); }
+        .concept-node[data-cat="marcadores"].active { background-color: #eefbf9; border-color: var(--color-marcadores); }
+        .concept-node[data-cat="perfis"].active { background-color: #fff8ee; border-color: var(--color-perfis); }
+        .concept-node[data-cat="teoria"].active { background-color: #f3e5f5; border-color: var(--color-teoria); }
+        .concept-node[data-cat="metodo"].active { background-color: #e0f2f1; border-color: var(--color-metodo); }
+
+        /* Search highlight */
+        .concept-node.search-match {
+            box-shadow: 0 0 0 3px rgba(91,84,224,0.3), 0 6px 16px rgba(45,53,97,0.12);
+            border-color: var(--primary) !important;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: var(--dark);
+            color: rgba(255,255,255,0.85);
+            padding: 10px 16px;
+            text-align: center;
+            font-size: 10.5px;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        footer::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        /* ===== MOBILE SIDEBAR TOGGLE ===== */
+        .sidebar-toggle {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 20;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: none;
+            background: var(--primary);
+            color: #fff;
+            font-size: 22px;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(91,84,224,0.4);
+            transition: transform 0.2s;
+        }
+        .sidebar-toggle:active { transform: scale(0.92); }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            :root { --sidebar-w: 280px; }
+            .concept-node { font-size: 11px; padding: 10px 12px; max-width: 190px; }
+            .link-label { font-size: 10px; padding: 3px 8px; }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 85vw;
+                max-width: 340px;
+                height: 100vh;
+                z-index: 50;
+                transform: translateX(-100%);
+                transition: transform 0.35s ease;
+                box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+            }
+            .sidebar.open { transform: translateX(0); }
+
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.35);
+                z-index: 40;
+            }
+            .sidebar-overlay.visible { display: block; }
+
+            .sidebar-toggle { display: flex; align-items: center; justify-content: center; }
+
+            .canvas { padding: 20px 10px; }
+            .link-label { font-size: 9px; padding: 2px 6px; }
+            .concept-node { font-size: 10.5px; padding: 8px 10px; max-width: 170px; }
+
+            header h1 { font-size: 1em; }
+            header .subtitle-tag { font-size: 9px; }
+
+            .zoom-controls { bottom: 80px; }
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(91,84,224,0.3); }
+            50% { box-shadow: 0 0 0 8px rgba(91,84,224,0); }
+        }
+        .concept-node.just-clicked {
+            animation: pulseGlow 0.6s ease;
+        }
+
+        /* Reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="title-block">
+        <div class="subtitle-tag">IFSULDEMINAS &bull; Polo Bragan&ccedil;a</div>
+        <h1>Bullying nas escolas p&uacute;blicas e privadas: os efeitos de g&ecirc;nero, ra&ccedil;a e n&iacute;vel socioecon&ocirc;mico</h1>
+        <div class="authors">Artigo: Cintia Santana Silva, Elaine Meire Vilela, Val&eacute;ria Cristina de Oliveira</div>
+    </div>
+    <div class="institution-block">
+        <strong>Psicologia do Desenvolvimento e Aprendizagem &ndash; Semana 7</strong><br>Curso de Pedagogia
+    </div>
+</header>
+
+<div class="main-container">
+    <!-- Sidebar overlay for mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="sidebar" id="sidebar">
+        <h2>&#128204; Navegue pelos conceitos</h2>
+
+        <!-- Search -->
+        <div class="search-box">
+            <span class="search-icon">&#128269;</span>
+            <input type="text" id="searchInput" placeholder="Buscar conceito..." aria-label="Buscar conceito no mapa">
+            <button class="search-clear" id="searchClear" aria-label="Limpar busca">&times;</button>
+        </div>
+
+        <button class="filter-btn btn-root" data-filter="root">&#127919; Tema Central <span class="expand-arrow">&#9654;</span></button>
+        <div class="filter-subitems" data-parent="root">
+            <button class="subitem-btn" data-cat="root" data-node-idx="1"><span class="sub-label">é definido como</span>&#128204; Comportamento Agressivo</button>
+            <button class="subitem-btn" data-cat="root" data-node-idx="2"><span class="sub-label">manifesta-se como</span>&#128483; Tipos de Bullying</button>
+            <button class="subitem-btn" data-cat="root" data-node-idx="3"><span class="sub-label">causa</span>&#9888; Consequências Graves</button>
+        </div>
+
+        <button class="filter-btn btn-redes" data-filter="redes">&#127979; Redes de Ensino <span class="expand-arrow">&#9654;</span></button>
+        <div class="filter-subitems" data-parent="redes">
+            <button class="subitem-btn" data-cat="redes" data-node-idx="5"><span class="sub-label">divide-se em</span>&#127963; Escola Pública</button>
+            <button class="subitem-btn" data-cat="redes" data-node-idx="6"><span class="sub-label">divide-se em</span>&#127979; Escola Privada</button>
+            <button class="subitem-btn" data-cat="redes" data-node-idx="7"><span class="sub-label">diferencial</span>&#9882; Diferenciais de Gênero</button>
+        </div>
+
+        <button class="filter-btn btn-marcadores" data-filter="marcadores">&#9878; Marcadores Sociais <span class="expand-arrow">&#9654;</span></button>
+        <div class="filter-subitems" data-parent="marcadores">
+            <button class="subitem-btn" data-cat="marcadores" data-node-idx="11"><span class="sub-label">compreende o</span>&#128176; Nível Socioeconômico</button>
+            <button class="subitem-btn" data-cat="marcadores" data-node-idx="12"><span class="sub-label">confirma</span>&#10003; Hierarquia de Status</button>
+            <button class="subitem-btn" data-cat="marcadores" data-node-idx="13"><span class="sub-label">compreende a</span>&#127757; Raça</button>
+            <button class="subitem-btn" data-cat="marcadores" data-node-idx="14"><span class="sub-label">não confirma</span>&#10060; Fenômeno Complexo</button>
+            <button class="subitem-btn" data-cat="marcadores" data-node-idx="15"><span class="sub-label">compreende o</span>&#9882; Gênero / Sexo</button>
+            <button class="subitem-btn" data-cat="marcadores" data-node-idx="16"><span class="sub-label">hipótese parcial</span>&#9888; Propensão Masculina</button>
+        </div>
+
+        <button class="filter-btn btn-perfis" data-filter="perfis">&#128101; Perfis de Envolvimento <span class="expand-arrow">&#9654;</span></button>
+        <div class="filter-subitems" data-parent="perfis">
+            <button class="subitem-btn" data-cat="perfis" data-node-idx="18"><span class="sub-label">classifica-se em</span>&#128543; Vítima</button>
+            <button class="subitem-btn" data-cat="perfis" data-node-idx="19"><span class="sub-label">mais comum entre</span>&#128201; Baixo NSE</button>
+            <button class="subitem-btn" data-cat="perfis" data-node-idx="20"><span class="sub-label">classifica-se em</span>&#128544; Agressor</button>
+            <button class="subitem-btn" data-cat="perfis" data-node-idx="21"><span class="sub-label">mais comum entre</span>&#128200; Alto NSE</button>
+            <button class="subitem-btn" data-cat="perfis" data-node-idx="22"><span class="sub-label">classifica-se em</span>&#128260; Vítima-Agressor</button>
+            <button class="subitem-btn" data-cat="perfis" data-node-idx="23"><span class="sub-label">representa</span>&#128202; 9,1% da amostra</button>
+        </div>
+
+        <button class="filter-btn btn-teoria" data-filter="teoria">&#128218; Referencial Te&oacute;rico <span class="expand-arrow">&#9654;</span></button>
+        <div class="filter-subitems" data-parent="teoria">
+            <button class="subitem-btn" data-cat="teoria" data-node-idx="25"><span class="sub-label">introduz os conceitos de</span>&#129504; Habitus e Violência Simbólica</button>
+        </div>
+
+        <button class="filter-btn btn-metodo" data-filter="metodo">&#128202; Metodologia <span class="expand-arrow">&#9654;</span></button>
+        <div class="filter-subitems" data-parent="metodo">
+            <button class="subitem-btn" data-cat="metodo" data-node-idx="9"><span class="sub-label">coletou dados com</span>&#128203; Amostra (97.846 alunos)</button>
+        </div>
+
+        <button class="filter-btn clear-btn" id="clear-btn">Limpar Filtros</button>
+
+        <div class="sidebar-divider"></div>
+
+        <div class="details-box" id="detailsBox">
+            <h3>&#128214; Evid&ecirc;ncia Textual</h3>
+            <div class="breadcrumb" id="box-breadcrumb"></div>
+            <div class="concept-title" id="box-title">Selecione um n&oacute; do Mapa</div>
+            <blockquote id="box-quote">Clique sobre qualquer caixa do mapa para ler os fragmentos correspondentes do artigo acad&ecirc;mico.</blockquote>
+            <div class="citation-source" id="box-source"></div>
+            <div class="children-nav" id="box-children"></div>
+        </div>
+    </div>
+
+    <div class="canvas-wrapper">
+        <div class="canvas" id="canvas">
+            <div class="tree" id="concept-tree">
+                
+                <!-- NÓ RAIZ -->
+                <div class="concept-node" data-cat="root" tabindex="0" role="button" aria-label="Bullying Escolar 9º ano Brasil"
+                     data-quote="O bullying caracteriza-se por um conjunto de comportamentos agressivos, os quais podem se manifestar de diversas formas. Tais comportamentos são provocados repetitivamente ao longo do tempo, por um ou mais estudantes contra outros, e caracterizados por um desequilíbrio de poder entre agressor e vítima, causando sentimentos de humilhação, angústia e exclusão." 
+                     data-page="pág. 4"
+                     data-path="Bullying Escolar">
+                    &#127919; Bullying Escolar<br>9&ordm; ano (Brasil)
+                </div>
+                
+                <!-- Connector from root to first UL -->
+                <div class="root-connector"></div>
+
+                <ul>
+                    <!-- DEFINIÇÃO E TIPOS -->
+                    <li data-branch="root">
+                        <span class="link-label" data-cat="root">&eacute; definido como</span>
+                        <div class="concept-node" data-cat="root" tabindex="0" role="button"
+                             data-quote="Comportamento agressivo intencional, repetitivo, com desequilíbrio de poder entre agressor e vítima." 
+                             data-page="p&aacute;g. 4"
+                             data-path="Bullying Escolar &rsaquo; Comportamento agressivo">
+                            &#128204; Comportamento agressivo<br>repetitivo e intencional
+                        </div>
+                        <ul>
+                            <li>
+                                <span class="link-label" data-cat="root">manifesta-se como</span>
+                                <div class="concept-node" data-cat="root" tabindex="0" role="button"
+                                     data-quote="Podem se manifestar por palavras (ameaças, escárnio, apelidos ofensivos), caracterizando o bullying verbal; por contato físico, caracterizando o bullying físico; ou de forma mais subjetiva e insinuadora (gestos obscenos, exclusão, disseminação de boatos), que caracteriza o bullying social. Mais recentemente, inclui-se também o cyberbullying." 
+                                     data-page="p&aacute;g. 6"
+                                     data-path="Bullying Escolar &rsaquo; Comportamento agressivo &rsaquo; Tipos">
+                                    &#128483; Bullying Verbal<br>&#129470; Bullying F&iacute;sico<br>&#128101; Bullying Social<br>&#128187; Cyberbullying
+                                </div>
+                            </li>
+                            <li>
+                                <span class="link-label" data-cat="root">causa</span>
+                                <div class="concept-node" data-cat="root" tabindex="0" role="button"
+                                     data-quote="Consequências devastadoras: dificuldade de concentração, baixa autoestima, ansiedade, depressão, ideação suicida, tentativa de suicídio, autoagressão e estresse psicológico." 
+                                     data-page="p&aacute;g. 4"
+                                     data-path="Bullying Escolar &rsaquo; Comportamento agressivo &rsaquo; Consequências">
+                                    &#9888; Consequ&ecirc;ncias graves<br>(sa&uacute;de mental e desempenho)
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- REDES DE ENSINO -->
+                    <li data-branch="redes">
+                        <span class="link-label" data-cat="redes">ocorre em diferentes</span>
+                        <div class="concept-node" data-cat="redes" tabindex="0" role="button"
+                             data-quote="As análises são feitas separadamente para escolas públicas e privadas." 
+                             data-page="p&aacute;g. 2 (Resumo)"
+                             data-path="Bullying Escolar &rsaquo; Redes de Ensino">
+                            &#127979; Redes de Ensino
+                        </div>
+                        <ul>
+                            <li>
+                                <span class="link-label" data-cat="redes">divide-se em</span>
+                                <div class="concept-node" data-cat="redes" tabindex="0" role="button"
+                                     data-quote="A prática de bullying mostra-se mais presente em escolas privadas, enquanto a vitimização é mais reportada em escolas públicas." 
+                                     data-page="p&aacute;g. 7"
+                                     data-path="Bullying Escolar &rsaquo; Redes de Ensino &rsaquo; Escola Pública">
+                                    &#127963; Escola P&uacute;blica
+                                </div>
+                            </li>
+                            <li>
+                                <span class="link-label" data-cat="redes">divide-se em</span>
+                                <div class="concept-node" data-cat="redes" tabindex="0" role="button"
+                                     data-quote="Alunos de escolas privadas possuem, em média, nível socioeconômico bastante superior ao dos alunos de escolas públicas." 
+                                     data-page="p&aacute;g. 9"
+                                     data-path="Bullying Escolar &rsaquo; Redes de Ensino &rsaquo; Escola Privada">
+                                    &#127979; Escola Privada
+                                </div>
+                                <ul>
+                                    <li>
+                                        <span class="link-label" data-cat="redes">apresenta diferenciais</span>
+                                        <div class="concept-node" data-cat="redes" tabindex="0" role="button"
+                                             data-quote="Os diferenciais de gênero são mais expressivos nas escolas privadas que nas públicas." 
+                                             data-page="p&aacute;g. 2 (Resumo)"
+                                             data-path="Bullying Escolar &rsaquo; Redes de Ensino &rsaquo; Escola Privada &rsaquo; Diferenciais de Gênero">
+                                            &#9882; Diferenciais de G&ecirc;nero<br>mais expressivos
+                                        </div>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- METODOLOGIA -->
+                    <li data-branch="metodo">
+                        <span class="link-label" data-cat="metodo">fundamenta-se em</span>
+                        <div class="concept-node" data-cat="metodo" tabindex="0" role="button"
+                             data-quote="Analisamos dados da Pesquisa Nacional de Saúde do Escolar (PeNSE) 2015 a partir de Modelos Lineares Generalizados Hierárquicos (MLGH)." 
+                             data-page="p&aacute;g. 2 (Resumo)"
+                             data-path="Bullying Escolar &rsaquo; Metodologia">
+                            &#128202; Metodologia<br>PeNSE 2015 + MLGH
+                        </div>
+                        <ul>
+                            <li>
+                                <span class="link-label" data-cat="metodo">coletou dados com</span>
+                                <div class="concept-node" data-cat="metodo" tabindex="0" role="button"
+                                     data-quote="Amostra: 77.488 alunos de escolas públicas (2.415 escolas) e 20.358 alunos de escolas privadas (610 escolas)." 
+                                     data-page="p&aacute;g. 11"
+                                     data-path="Bullying Escolar &rsaquo; Metodologia &rsaquo; Amostra">
+                                    &#128203; Amostra total:<br>97.846 alunos do 9&ordm; ano
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- MARCADORES SOCIAIS -->
+                    <li data-branch="marcadores">
+                        <span class="link-label" data-cat="marcadores">sofre efeitos dos</span>
+                        <div class="concept-node" data-cat="marcadores" tabindex="0" role="button"
+                             data-quote="Três fatores destacam-se como principais condicionantes: classe social, grupo étnico/racial e gênero." 
+                             data-page="p&aacute;g. 5"
+                             data-path="Bullying Escolar &rsaquo; Marcadores da Desigualdade">
+                            &#9878; Marcadores da Desigualdade
+                        </div>
+                        <ul>
+                            <!-- NSE -->
+                            <li>
+                                <span class="link-label" data-cat="marcadores">compreende o</span>
+                                <div class="concept-node" data-cat="marcadores" tabindex="0" role="button"
+                                     data-quote="Nível socioeconômico mensurado pelo consumo de bens duráveis e acesso a serviços no domicílio." 
+                                     data-page="p&aacute;g. 9"
+                                     data-path="Bullying Escolar &rsaquo; Marcadores &rsaquo; Nível Socioeconômico">
+                                    &#128176; N&iacute;vel Socioecon&ocirc;mico
+                                </div>
+                                <ul>
+                                    <li>
+                                        <span class="link-label" data-cat="marcadores">&#10003; confirma a hip&oacute;tese</span>
+                                        <div class="concept-node" data-cat="marcadores" tabindex="0" role="button"
+                                             data-quote="Apenas no que se refere ao nível socioeconômico, podemos afirmar que o bullying reproduz a hierarquia de status presente na sociedade. Maior NSE → mais propenso a praticar; menor NSE → mais propenso a sofrer." 
+                                             data-page="p&aacute;g. 2 (Resumo)"
+                                             data-path="Bullying Escolar &rsaquo; Marcadores &rsaquo; NSE &rsaquo; Hierarquia de Status">
+                                            &#10003; Reproduz a Hierarquia<br>de Status Social
+                                        </div>
+                                    </li>
+                                </ul>
+                            </li>
+                            <!-- RAÇA -->
+                            <li>
+                                <span class="link-label" data-cat="marcadores">compreende a</span>
+                                <div class="concept-node" data-cat="marcadores" tabindex="0" role="button"
+                                     data-quote="No que se refere à raça, observa-se que o envolvimento com o bullying permeia os grupos raciais em múltiplos sentidos." 
+                                     data-page="p&aacute;g. 2 (Resumo)"
+                                     data-path="Bullying Escolar &rsaquo; Marcadores &rsaquo; Raça">
+                                    &#127757; Ra&ccedil;a
+                                </div>
+                                <ul>
+                                    <li>
+                                        <span class="link-label" data-cat="marcadores">&#10060; n&atilde;o confirma a hip&oacute;tese</span>
+                                        <div class="concept-node" data-cat="marcadores" tabindex="0" role="button"
+                                             data-quote="Resultado complexo: em escolas públicas, negros e pardos (maioria numérica) aparecem mais como agressores; em escolas privadas, indígenas têm 45% mais chances de vitimização. Não se confirma que brancos sejam mais agressores." 
+                                             data-page="p&aacute;g. 13-14"
+                                             data-path="Bullying Escolar &rsaquo; Marcadores &rsaquo; Raça &rsaquo; Fenômeno complexo">
+                                            &#10060; Fen&ocirc;meno complexo<br>permeia grupos em m&uacute;ltiplos sentidos
+                                        </div>
+                                    </li>
+                                </ul>
+                            </li>
+                            <!-- GÊNERO -->
+                            <li>
+                                <span class="link-label" data-cat="marcadores">compreende o</span>
+                                <div class="concept-node" data-cat="marcadores" tabindex="0" role="button"
+                                     data-quote="Trabalhamos com a variável sexo, mas introduzimos a categoria analítica gênero." 
+                                     data-page="p&aacute;g. 8 (Nota 9)"
+                                     data-path="Bullying Escolar &rsaquo; Marcadores &rsaquo; Gênero">
+                                    &#9882; G&ecirc;nero / Sexo
+                                </div>
+                                <ul>
+                                    <li>
+                                        <span class="link-label" data-cat="marcadores">&#9888; hip&oacute;tese parcial</span>
+                                        <div class="concept-node" data-cat="marcadores" tabindex="0" role="button"
+                                             data-quote="Meninos têm maior propensão ao envolvimento (vítima, agressor ou vítima-agressor) do que meninas. Diferenciais mais expressivos em escolas privadas." 
+                                             data-page="p&aacute;g. 2 (Resumo)"
+                                             data-path="Bullying Escolar &rsaquo; Marcadores &rsaquo; Gênero &rsaquo; Propensão Masculina">
+                                            &#9888; Maior propens&atilde;o<br>no Sexo Masculino
+                                        </div>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- PERFIS DE ENVOLVIMENTO -->
+                    <li data-branch="perfis">
+                        <span class="link-label" data-cat="perfis">apresenta diferentes</span>
+                        <div class="concept-node" data-cat="perfis" tabindex="0" role="button"
+                             data-quote="Os diferentes tipos de envolvimento dos alunos com o bullying: vítima, agressor e vítima-agressor." 
+                             data-page="p&aacute;g. 2 (Resumo)"
+                             data-path="Bullying Escolar &rsaquo; Perfis de Envolvimento">
+                            &#128101; Perfis de Envolvimento
+                        </div>
+                        <ul>
+                            <li>
+                                <span class="link-label" data-cat="perfis">classifica-se em</span>
+                                <div class="concept-node" data-cat="perfis" tabindex="0" role="button"
+                                     data-quote="Vítimas passivas ou submissas, inseguras, que não respondem aos ataques." 
+                                     data-page="p&aacute;g. 9"
+                                     data-path="Bullying Escolar &rsaquo; Perfis &rsaquo; Vítima">
+                                    &#128543; V&iacute;tima
+                                </div>
+                                <ul>
+                                    <li>
+                                        <span class="link-label" data-cat="perfis">mais comum entre</span>
+                                        <div class="concept-node" data-cat="perfis" tabindex="0" role="button"
+                                             data-quote="Alunos de menor nível socioeconômico estão mais propensos a sofrer bullying." 
+                                             data-page="p&aacute;g. 2 (Resumo)"
+                                             data-path="Bullying Escolar &rsaquo; Perfis &rsaquo; Vítima &rsaquo; Baixo NSE">
+                                            &#128201; Baixo N&iacute;vel Socioecon&ocirc;mico
+                                        </div>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <span class="link-label" data-cat="perfis">classifica-se em</span>
+                                <div class="concept-node" data-cat="perfis" tabindex="0" role="button"
+                                     data-quote="Quem integra grupos dominantes estaria em posição de maior poder nas lutas simbólicas – potenciais ofensores." 
+                                     data-page="p&aacute;g. 5"
+                                     data-path="Bullying Escolar &rsaquo; Perfis &rsaquo; Agressor">
+                                    &#128544; Agressor
+                                </div>
+                                <ul>
+                                    <li>
+                                        <span class="link-label" data-cat="perfis">mais comum entre</span>
+                                        <div class="concept-node" data-cat="perfis" tabindex="0" role="button"
+                                             data-quote="Alunos de maior nível socioeconômico estão mais propensos a praticar bullying." 
+                                             data-page="p&aacute;g. 2 (Resumo)"
+                                             data-path="Bullying Escolar &rsaquo; Perfis &rsaquo; Agressor &rsaquo; Alto NSE">
+                                            &#128200; Alto N&iacute;vel Socioecon&ocirc;mico
+                                        </div>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <span class="link-label" data-cat="perfis">classifica-se em</span>
+                                <div class="concept-node" data-cat="perfis" tabindex="0" role="button"
+                                     data-quote="Vítimas-agressoras que tendem a ser provocadoras e combinam ansiedade com reação agressiva." 
+                                     data-page="p&aacute;g. 9"
+                                     data-path="Bullying Escolar &rsaquo; Perfis &rsaquo; Vítima-Agressor">
+                                    &#128260; V&iacute;tima-Agressor
+                                </div>
+                                <ul>
+                                    <li>
+                                        <span class="link-label" data-cat="perfis">representa</span>
+                                        <div class="concept-node" data-cat="perfis" tabindex="0" role="button"
+                                             data-quote="Em nossa amostra, observamos que 9,1% dos envolvidos são vítimas-agressoras." 
+                                             data-page="p&aacute;g. 9"
+                                             data-path="Bullying Escolar &rsaquo; Perfis &rsaquo; Vítima-Agressor &rsaquo; 9,1%">
+                                            &#128202; 9,1% da amostra
+                                        </div>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- REFERENCIAL TEÓRICO -->
+                    <li data-branch="teoria">
+                        <span class="link-label" data-cat="teoria">é interpretado por</span>
+                        <div class="concept-node" data-cat="teoria" tabindex="0" role="button"
+                             data-quote="Entendemos que a abordagem de Pierre Bourdieu seja adequada para compreender as relações estabelecidas em uma sociedade desigual como o Brasil." 
+                             data-page="p&aacute;g. 5"
+                             data-path="Bullying Escolar &rsaquo; Referencial Teórico">
+                            &#128218; Pierre Bourdieu<br>(referencial te&oacute;rico)
+                        </div>
+                        <ul>
+                            <li>
+                                <span class="link-label" data-cat="teoria">introduz os conceitos de</span>
+                                <div class="concept-node" data-cat="teoria" tabindex="0" role="button"
+                                     data-quote="Habitus do grupo dominante sobrevalorizado e recompensado na escola. Violência simbólica age por meio das disposições modeladas pelas estruturas de dominação." 
+                                     data-page="p&aacute;g. 5-6"
+                                     data-path="Bullying Escolar &rsaquo; Referencial Teórico &rsaquo; Conceitos">
+                                    &#129504; Habitus<br>&#127917; Viol&ecirc;ncia simb&oacute;lica<br>&#127963; Reprodu&ccedil;&atilde;o da domina&ccedil;&atilde;o
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Zoom Controls -->
+        <div class="zoom-controls">
+            <button class="zoom-btn" id="zoomIn" aria-label="Aumentar zoom">+</button>
+            <div class="zoom-level" id="zoomLevel">100%</div>
+            <button class="zoom-btn" id="zoomOut" aria-label="Diminuir zoom">&minus;</button>
+            <button class="zoom-btn" id="zoomReset" aria-label="Resetar zoom" style="font-size:13px;">&#8634;</button>
+        </div>
+
+        <!-- Scroll hint for mobile -->
+        <div class="scroll-hint" id="scrollHint">&#8592; Deslize para navegar no mapa &#8594;</div>
+    </div>
+</div>
+
+<!-- Mobile sidebar toggle -->
+<button class="sidebar-toggle" id="sidebarToggle" aria-label="Abrir menu lateral">&#9776;</button>
+
+<footer>
+    <p>&copy; 2026 LUCIANO RODRIGUES PEREIRA &ndash; Estudante do Curso de Pedagogia - IFSuldeMinas. Mapa conceitual baseado no artigo de Silva, Vilela &amp; Oliveira (2024).</p>
+</footer>
+
+<script>
+(function() {
+    'use strict';
+
+    // ===== DOM REFS =====
+    const tree = document.getElementById('concept-tree');
+    const canvas = document.getElementById('canvas');
+    const nodes = document.querySelectorAll('.concept-node');
+    const labels = document.querySelectorAll('.link-label');
+    const filterBtns = document.querySelectorAll('.filter-btn[data-filter]');
+    const clearBtn = document.getElementById('clear-btn');
+    const boxTitle = document.getElementById('box-title');
+    const boxQuote = document.getElementById('box-quote');
+    const boxSource = document.getElementById('box-source');
+    const boxBreadcrumb = document.getElementById('box-breadcrumb');
+    const boxChildren = document.getElementById('box-children');
+    const searchInput = document.getElementById('searchInput');
+    const searchClear = document.getElementById('searchClear');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const scrollHint = document.getElementById('scrollHint');
+
+    let currentZoom = 1;
+    const ZOOM_MIN = 0.4;
+    const ZOOM_MAX = 1.5;
+    const ZOOM_STEP = 0.1;
+
+    // Indexable array of all concept nodes for sub-item navigation
+    const allNodesArray = Array.from(nodes);
+
+    // ===== CATEGORY ACTIVATION =====
+    function activateCategory(cat) {
+        tree.classList.add('fade-inactive');
+        // Remove any previous cat-* class
+        tree.className = tree.className.replace(/cat-\w+/g, '').trim();
+        if (cat) tree.classList.add('cat-' + cat);
+        tree.classList.add('fade-inactive');
+
+        nodes.forEach(node => {
+            node.classList.toggle('active', node.getAttribute('data-cat') === cat);
+        });
+
+        labels.forEach(label => {
+            label.classList.toggle('active', label.getAttribute('data-cat') === cat);
+        });
+    }
+
+    // Activate a single node (highlights the node + its direct ancestors path)
+    function activateSingleNode(node) {
+        tree.classList.add('fade-inactive');
+        const cat = node.getAttribute('data-cat');
+        tree.className = tree.className.replace(/cat-\w+/g, '').trim();
+        if (cat) tree.classList.add('cat-' + cat);
+        tree.classList.add('fade-inactive');
+
+        // Deactivate all first
+        nodes.forEach(n => n.classList.remove('active'));
+        labels.forEach(l => l.classList.remove('active'));
+
+        // Activate this node
+        node.classList.add('active');
+
+        // Check if this is the root node (direct child of tree, not inside an li)
+        const isRoot = (node === tree.querySelector(':scope > .concept-node'));
+
+        if (isRoot) {
+            // For root node, activate all first-level children
+            const topUl = tree.querySelector(':scope > ul');
+            if (topUl) {
+                topUl.querySelectorAll(':scope > li > .concept-node').forEach(n => n.classList.add('active'));
+                topUl.querySelectorAll(':scope > li > .link-label').forEach(l => l.classList.add('active'));
+            }
+        } else {
+            // Also activate ancestor nodes (path to root) for visual continuity
+            let current = node.closest('li');
+            while (current) {
+                const parentUl = current.parentElement;
+                if (parentUl && parentUl.tagName === 'UL') {
+                    const parentLi = parentUl.closest('li');
+                    if (parentLi) {
+                        const parentNode = parentLi.querySelector(':scope > .concept-node');
+                        const parentLabel = parentLi.querySelector(':scope > .link-label');
+                        if (parentNode) parentNode.classList.add('active');
+                        if (parentLabel) parentLabel.classList.add('active');
+                        current = parentLi;
+                    } else {
+                        break;
+                    }
+                } else {
+                    break;
+                }
+            }
+
+            // Also activate the root node
+            const rootNode = tree.querySelector(':scope > .concept-node');
+            if (rootNode) rootNode.classList.add('active');
+
+            // Activate child link-labels and child nodes of this node
+            const li = node.closest('li');
+            if (li) {
+                const nestedUl = li.querySelector(':scope > ul');
+                if (nestedUl) {
+                    nestedUl.querySelectorAll(':scope > li > .link-label').forEach(l => l.classList.add('active'));
+                    nestedUl.querySelectorAll(':scope > li > .concept-node').forEach(n => n.classList.add('active'));
+                }
+            }
+        }
+    }
+
+    function clearAll() {
+        tree.classList.remove('fade-inactive');
+        tree.className = tree.className.replace(/cat-\w+/g, '').trim();
+        nodes.forEach(n => { n.classList.remove('active'); n.classList.remove('search-match'); });
+        labels.forEach(l => l.classList.remove('active'));
+        filterBtns.forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.filter-subitems').forEach(s => s.classList.remove('open'));
+        document.querySelectorAll('.subitem-btn').forEach(s => s.classList.remove('active-sub'));
+        searchInput.value = '';
+        searchClear.classList.remove('visible');
+        boxTitle.innerText = 'Selecione um nó do Mapa';
+        boxQuote.innerText = 'Clique sobre qualquer caixa do mapa para ler os fragmentos correspondentes do artigo acadêmico.';
+        boxSource.innerText = '';
+        boxBreadcrumb.innerHTML = '';
+        boxChildren.innerHTML = '';
+    }
+
+    // ===== BREADCRUMB =====
+    function renderBreadcrumb(pathStr) {
+        if (!pathStr) { boxBreadcrumb.innerHTML = ''; return; }
+        const parts = pathStr.split('›').map(p => p.trim());
+        boxBreadcrumb.innerHTML = parts.map((p, i) => {
+            const isLast = i === parts.length - 1;
+            return `<span${isLast ? ' style="color:var(--dark);font-weight:700"' : ''}>${p}</span>${!isLast ? '<span class="sep">›</span>' : ''}`;
+        }).join('');
+    }
+
+    // ===== SCROLL TO NODE =====
+    function scrollToNode(node) {
+        // Wait a frame for the active class to be applied
+        requestAnimationFrame(() => {
+            const canvasRect = canvas.getBoundingClientRect();
+            const nodeRect = node.getBoundingClientRect();
+
+            // Check if node is visible in the canvas viewport
+            const isVisible = (
+                nodeRect.top >= canvasRect.top &&
+                nodeRect.bottom <= canvasRect.bottom &&
+                nodeRect.left >= canvasRect.left &&
+                nodeRect.right <= canvasRect.right
+            );
+
+            if (!isVisible) {
+                node.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+            }
+        });
+    }
+
+    // ===== CLICK ANIMATION =====
+    function pulseNode(node) {
+        node.classList.remove('just-clicked');
+        void node.offsetWidth; // force reflow
+        node.classList.add('just-clicked');
+        node.addEventListener('animationend', () => node.classList.remove('just-clicked'), { once: true });
+    }
+
+    // ===== FILTER BUTTONS (expandable) =====
+    const subitems = document.querySelectorAll('.filter-subitems');
+    const subitemBtns = document.querySelectorAll('.subitem-btn');
+
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const filter = btn.getAttribute('data-filter');
+            if (!filter) return;
+
+            const wasActive = btn.classList.contains('active');
+
+            // Deactivate all
+            filterBtns.forEach(b => b.classList.remove('active'));
+            subitems.forEach(s => s.classList.remove('open'));
+            subitemBtns.forEach(s => s.classList.remove('active-sub'));
+
+            // Toggle this category
+            if (wasActive) {
+                // Clicking again = collapse + clear filter
+                clearAll();
+                return;
+            }
+
+            btn.classList.add('active');
+            activateCategory(filter);
+
+            // Expand sub-items for this category
+            const subContainer = document.querySelector('.filter-subitems[data-parent="' + filter + '"]');
+            if (subContainer) subContainer.classList.add('open');
+
+            const catNames = {
+                root: 'Tema Central',
+                redes: 'Redes de Ensino',
+                marcadores: 'Marcadores Sociais',
+                perfis: 'Perfis de Envolvimento',
+                teoria: 'Referencial Teórico',
+                metodo: 'Metodologia'
+            };
+            boxTitle.innerText = '\u{1F4CC} Grupo: ' + (catNames[filter] || filter);
+            boxQuote.innerText = 'Clique em um sub-item abaixo ou no mapa para ver os detalhes.';
+            boxSource.innerText = '';
+            boxBreadcrumb.innerHTML = '';
+            boxChildren.innerHTML = '';
+
+            // Scroll to first active node
+            const firstActive = tree.querySelector('.concept-node.active');
+            if (firstActive) scrollToNode(firstActive);
+        });
+    });
+
+    // ===== SUB-ITEM BUTTONS =====
+    subitemBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const idx = parseInt(btn.getAttribute('data-node-idx'));
+            const targetNode = allNodesArray[idx];
+            if (!targetNode) return;
+
+            // Highlight this sub-item
+            subitemBtns.forEach(s => s.classList.remove('active-sub'));
+            btn.classList.add('active-sub');
+
+            // Activate the node
+            handleNodeActivate(targetNode);
+        });
+    });
+
+    // ===== NODE CLICKS =====
+    function handleNodeActivate(node) {
+        const cat = node.getAttribute('data-cat');
+        const quote = node.getAttribute('data-quote');
+        const page = node.getAttribute('data-page');
+        const path = node.getAttribute('data-path') || '';
+
+        filterBtns.forEach(b => b.classList.remove('active'));
+        const activeBtn = document.querySelector('.filter-btn[data-filter="' + cat + '"]');
+        if (activeBtn) activeBtn.classList.add('active');
+
+        // Expand the matching sub-items
+        subitems.forEach(s => s.classList.remove('open'));
+        const subContainer = document.querySelector('.filter-subitems[data-parent="' + cat + '"]');
+        if (subContainer) subContainer.classList.add('open');
+
+        // Highlight the corresponding sub-item button if it exists
+        subitemBtns.forEach(s => s.classList.remove('active-sub'));
+        const nodeIdx = getNodeIndex(node);
+        const matchingSubBtn = document.querySelector('.subitem-btn[data-node-idx="' + nodeIdx + '"]');
+        if (matchingSubBtn) matchingSubBtn.classList.add('active-sub');
+
+        // Use single-node activation for specific node clicks
+        activateSingleNode(node);
+
+        // Display info
+        boxTitle.innerText = node.innerText.trim();
+        boxQuote.innerText = '\u201C' + quote + '\u201D';
+        boxSource.innerText = 'Fonte: Silva, Vilela & Oliveira (' + page + ')';
+        renderBreadcrumb(path);
+        renderChildrenNav(node);
+
+        pulseNode(node);
+        scrollToNode(node);
+
+        // On mobile, show details panel by opening sidebar
+        if (window.innerWidth <= 768) {
+            openSidebar();
+            // Scroll details box into view inside sidebar
+            const detailsBox = document.getElementById('detailsBox');
+            setTimeout(() => {
+                detailsBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 400);
+        }
+    }
+
+    nodes.forEach(node => {
+        node.addEventListener('click', (e) => {
+            e.stopPropagation();
+            handleNodeActivate(node);
+        });
+
+        // Keyboard support
+        node.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleNodeActivate(node);
+            }
+        });
+    });
+
+    // ===== CHILDREN NAVIGATION IN SIDEBAR =====
+    const catColors = {
+        root: 'var(--color-root)',
+        redes: 'var(--color-redes)',
+        marcadores: 'var(--color-marcadores)',
+        perfis: 'var(--color-perfis)',
+        teoria: 'var(--color-teoria)',
+        metodo: 'var(--color-metodo)'
+    };
+
+    function getNodeIndex(node) {
+        return allNodesArray.indexOf(node);
+    }
+
+    function renderChildrenNav(node) {
+        boxChildren.innerHTML = '';
+
+        // Find parent node (go up the tree)
+        const parentLi = node.closest('li');
+        const parentUl = parentLi ? parentLi.parentElement : null;
+        const parentLiOfUl = parentUl ? parentUl.closest('li') : null;
+        let parentNode = null;
+        if (parentLiOfUl) {
+            parentNode = parentLiOfUl.querySelector(':scope > .concept-node');
+        }
+        // Check if node is the root (direct child of tree)
+        const isRoot = (node === tree.querySelector(':scope > .concept-node'));
+
+        // Find child nodes (go down the tree)
+        const childConceptNodes = [];
+        if (isRoot) {
+            const topUl = tree.querySelector(':scope > ul');
+            if (topUl) {
+                topUl.querySelectorAll(':scope > li').forEach(li => {
+                    const childNode = li.querySelector(':scope > .concept-node');
+                    const childLabel = li.querySelector(':scope > .link-label');
+                    if (childNode) {
+                        childConceptNodes.push({ node: childNode, label: childLabel ? childLabel.textContent.trim() : '' });
+                    }
+                });
+            }
+        } else {
+            const li = node.closest('li');
+            if (li) {
+                const nestedUl = li.querySelector(':scope > ul');
+                if (nestedUl) {
+                    nestedUl.querySelectorAll(':scope > li').forEach(subLi => {
+                        const childNode = subLi.querySelector(':scope > .concept-node');
+                        const childLabel = subLi.querySelector(':scope > .link-label');
+                        if (childNode) {
+                            childConceptNodes.push({ node: childNode, label: childLabel ? childLabel.textContent.trim() : '' });
+                        }
+                    });
+                }
+            }
+        }
+
+        buildChildrenHTML(parentNode, childConceptNodes);
+    }
+
+    // Render children nav when a category filter button is clicked (shows root's children for that category)
+    function renderChildrenNavForCategory(rootNode, cat) {
+        boxChildren.innerHTML = '';
+
+        const topUl = tree.querySelector(':scope > ul');
+        const childConceptNodes = [];
+        if (topUl) {
+            topUl.querySelectorAll(':scope > li').forEach(li => {
+                const childNode = li.querySelector(':scope > .concept-node');
+                const childLabel = li.querySelector(':scope > .link-label');
+                if (childNode && childNode.getAttribute('data-cat') === cat) {
+                    childConceptNodes.push({ node: childNode, label: childLabel ? childLabel.textContent.trim() : '' });
+                }
+            });
+        }
+
+        buildChildrenHTML(null, childConceptNodes);
+    }
+
+    function buildChildrenHTML(parentNode, childConceptNodes) {
+        let html = '';
+
+        // Parent link
+        if (parentNode) {
+            html += '<button class="parent-link" data-node-id="' + getNodeIndex(parentNode) + '">' +
+                '<span class="arrow-up">\u2191</span>' +
+                '<span>' + parentNode.innerText.trim().replace(/\n/g, ' ') + '</span>' +
+                '</button>';
+        }
+
+        // Children links
+        if (childConceptNodes.length > 0) {
+            html += '<div class="children-nav-title">Conectados a este nó</div>';
+            childConceptNodes.forEach(item => {
+                const cCat = item.node.getAttribute('data-cat');
+                const cColor = catColors[cCat] || 'var(--primary)';
+                const name = item.node.innerText.trim().replace(/\n/g, ' ');
+                html += '<button class="child-link" data-node-id="' + getNodeIndex(item.node) + '">' +
+                    '<span class="child-dot" style="background:' + cColor + '"></span>' +
+                    '<span class="child-info">' +
+                    (item.label ? '<div class="child-label">' + item.label + '</div>' : '') +
+                    '<div class="child-name">' + name + '</div>' +
+                    '</span></button>';
+            });
+        }
+
+        boxChildren.innerHTML = html;
+
+        // Attach click handlers to child and parent links
+        boxChildren.querySelectorAll('.child-link, .parent-link').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const idx = parseInt(btn.getAttribute('data-node-id'));
+                const targetNode = allNodesArray[idx];
+                if (targetNode) {
+                    handleNodeActivate(targetNode);
+                }
+            });
+        });
+    }
+
+    // ===== CLEAR BUTTON =====
+    clearBtn.addEventListener('click', clearAll);
+
+    // ===== SEARCH =====
+    let searchTimeout;
+    searchInput.addEventListener('input', () => {
+        clearTimeout(searchTimeout);
+        const query = searchInput.value.trim().toLowerCase();
+        searchClear.classList.toggle('visible', query.length > 0);
+
+        if (!query) {
+            nodes.forEach(n => n.classList.remove('search-match'));
+            // Don't clear filters automatically
+            return;
+        }
+
+        searchTimeout = setTimeout(() => {
+            let firstMatch = null;
+            nodes.forEach(node => {
+                const text = node.innerText.toLowerCase();
+                const quote = (node.getAttribute('data-quote') || '').toLowerCase();
+                const match = text.includes(query) || quote.includes(query);
+                node.classList.toggle('search-match', match);
+                if (match && !firstMatch) firstMatch = node;
+            });
+
+            if (firstMatch) {
+                clearAll(); // Reset filters to show all nodes
+                firstMatch.classList.add('search-match');
+                scrollToNode(firstMatch);
+                
+                // Activate that node's details
+                handleNodeActivate(firstMatch);
+                firstMatch.classList.add('search-match');
+            }
+        }, 300);
+    });
+
+    searchClear.addEventListener('click', () => {
+        searchInput.value = '';
+        searchClear.classList.remove('visible');
+        nodes.forEach(n => n.classList.remove('search-match'));
+        searchInput.focus();
+    });
+
+    // ===== ZOOM =====
+    function setZoom(z) {
+        currentZoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, z));
+        tree.style.transform = 'scale(' + currentZoom + ')';
+        document.getElementById('zoomLevel').textContent = Math.round(currentZoom * 100) + '%';
+    }
+
+    document.getElementById('zoomIn').addEventListener('click', () => setZoom(currentZoom + ZOOM_STEP));
+    document.getElementById('zoomOut').addEventListener('click', () => setZoom(currentZoom - ZOOM_STEP));
+    document.getElementById('zoomReset').addEventListener('click', () => setZoom(1));
+
+    // Mouse wheel zoom (Ctrl + scroll)
+    canvas.addEventListener('wheel', (e) => {
+        if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? -ZOOM_STEP : ZOOM_STEP;
+            setZoom(currentZoom + delta);
+        }
+    }, { passive: false });
+
+    // ===== MOBILE SIDEBAR =====
+    function openSidebar() {
+        sidebar.classList.add('open');
+        sidebarOverlay.classList.add('visible');
+    }
+    function closeSidebar() {
+        sidebar.classList.remove('open');
+        sidebarOverlay.classList.remove('visible');
+    }
+
+    sidebarToggle.addEventListener('click', () => {
+        if (sidebar.classList.contains('open')) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
+    });
+
+    sidebarOverlay.addEventListener('click', closeSidebar);
+
+    // ===== SCROLL HINT (mobile) =====
+    function checkScrollHint() {
+        if (window.innerWidth > 768) {
+            scrollHint.classList.remove('visible');
+            return;
+        }
+        const scrollWidth = canvas.scrollWidth;
+        const clientWidth = canvas.clientWidth;
+        if (scrollWidth > clientWidth + 50) {
+            scrollHint.classList.add('visible');
+            setTimeout(() => scrollHint.classList.remove('visible'), 4000);
+        }
+    }
+
+    // Show hint on load and resize
+    window.addEventListener('resize', checkScrollHint);
+    setTimeout(checkScrollHint, 1000);
+
+    // ===== KEYBOARD SHORTCUTS =====
+    document.addEventListener('keydown', (e) => {
+        // Escape to clear
+        if (e.key === 'Escape') {
+            clearAll();
+            closeSidebar();
+        }
+        // / to focus search
+        if (e.key === '/' && document.activeElement !== searchInput) {
+            e.preventDefault();
+            searchInput.focus();
+        }
+    });
+
+    // ===== TOUCH: HIDE SCROLL HINT AFTER FIRST SCROLL =====
+    let hintHidden = false;
+    canvas.addEventListener('scroll', () => {
+        if (!hintHidden) {
+            scrollHint.classList.remove('visible');
+            hintHidden = true;
+        }
+    }, { passive: true });
+
+})();
+</script>
+</body>
+</html>
